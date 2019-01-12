@@ -81,12 +81,7 @@ public class EossAuthorizingRealm extends AuthorizingRealm {
         UsernamePasswordToken token = (UsernamePasswordToken)authenticationToken;
 
         //only do check out user is exit or not, do not need do password matching
-        List<AdminUser> users = userMapper.select(new AdminUser().setUsername(token.getUsername()));
-        if(CollectionUtils.isEmpty(users)){
-            throw new UnknownAccountException("can not find user, name=" + token.getUsername());
-        }
-
-        AdminUser user = users.get(0);
+        AdminUser user = userMapper.selectOne(new AdminUser().setUsername(token.getUsername()));
         if(user == null){
             throw new UnknownAccountException("can not find user, name=" + token.getUsername());
         }
