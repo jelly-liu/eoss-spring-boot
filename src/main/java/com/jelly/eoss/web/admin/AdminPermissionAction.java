@@ -55,7 +55,7 @@ public class AdminPermissionAction extends BaseAction {
 	
 	@RequestMapping(value = "/add")
 	public ModelAndView txAdd(HttpServletRequest request, HttpServletResponse response, AdminPermission permission) throws Exception{
-		int id = ComUtil.QueryNextID("id", "admin_permission");
+		int id = ComUtil.QueryNextID("id", AdminPermission.TABLE_NAME);
 		permission.setId(id);
 		permissionService.insert(permission);
 		request.getRequestDispatcher("/system/permission/toList").forward(request, response);
@@ -64,7 +64,7 @@ public class AdminPermissionAction extends BaseAction {
 
     @RequestMapping(value = "/addAjax")
     public void txAddAjax(HttpServletRequest request, HttpServletResponse response, AdminPermission permission) throws Exception{
-        int id = ComUtil.QueryNextID("id", "admin_permission");
+        int id = ComUtil.QueryNextID("id", AdminPermission.TABLE_NAME);
         permission.setId(id);
         permissionService.insert(permission);
         response.getWriter().write("y");

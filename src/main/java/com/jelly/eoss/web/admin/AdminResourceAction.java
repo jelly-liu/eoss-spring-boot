@@ -64,7 +64,7 @@ public class AdminResourceAction extends BaseAction {
 	
 	@RequestMapping(value = "/add")
 	public ModelAndView txAdd(HttpServletRequest request, HttpServletResponse response, AdminMenu menu) throws Exception{
-		int id = ComUtil.QueryNextID("id", "admin_menu");
+		int id = ComUtil.QueryNextID("id", AdminMenu.TABLE_NAME);
 		menu.setUrl(Const.BASE_PATH + menu.getUrl());
 		menu.setId(id);
 		menu.setLeaf(1);

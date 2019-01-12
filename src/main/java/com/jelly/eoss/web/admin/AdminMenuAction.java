@@ -121,7 +121,7 @@ public class AdminMenuAction extends BaseAction {
 	
 	@RequestMapping(value = "/add")
 	public ModelAndView txAdd(HttpServletRequest request, HttpServletResponse response, AdminMenu menu, RedirectAttributes redirectAttributes) throws ServletException, IOException{
-		int id = ComUtil.QueryNextID("id", "admin_menu");
+		int id = ComUtil.QueryNextID("id", AdminMenu.TABLE_NAME);
 		menu.setId(id);
 		menu.setLeaf(0);
 		menu.setPath(menu.getPath() + "#" + id);

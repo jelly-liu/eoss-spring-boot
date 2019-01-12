@@ -102,7 +102,7 @@ public class AdminUserAction extends BaseAction {
             return mv;
         }
 
-        int id = ComUtil.QueryNextID("id", "admin_user");
+        int id = ComUtil.QueryNextID("id", AdminUser.TABLE_NAME);
 
         //加密密码
         String salt = secureRandomNumberGenerator.nextBytes(32).toString();
