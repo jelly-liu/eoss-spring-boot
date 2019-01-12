@@ -1,4 +1,4 @@
-package com.jelly.eoss.service.business;
+package com.jelly.eoss.service;
 
 import com.jelly.eoss.db.entity.AdminUser;
 import com.jelly.eoss.db.mapper.business.iface.LoginExtMapper;

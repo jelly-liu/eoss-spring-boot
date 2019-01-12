@@ -1,7 +1,7 @@
 package com.jelly.eoss.web.admin;
 
 import com.jelly.eoss.db.entity.AdminFilterchainDefinition;
-import com.jelly.eoss.service.basic.AdminFilterchainDefinitionService;
+import com.jelly.eoss.db.mapper.basic.iface.AdminFilterchainDefinitionMapper;
 import com.jelly.eoss.shiro.EossShiroFilterFactoryBean;
 import com.jelly.eoss.web.BaseAction;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +23,7 @@ public class AdminFilterDefinitionAction extends BaseAction {
     @Autowired
     EossShiroFilterFactoryBean eossShiroFilterFactoryBean;
     @Autowired
-    AdminFilterchainDefinitionService filterchainDefinitionService;
+    AdminFilterchainDefinitionMapper filterchainDefinitionMapper;
 
 	@RequestMapping(value = "/toUpdate")
 	public ModelAndView toUpdate(HttpServletRequest request, HttpServletResponse response) throws Exception{
@@ -48,7 +48,7 @@ public class AdminFilterDefinitionAction extends BaseAction {
         //refresh filterChainDefinition
         if(filterDefinition.getDefinition() != null){
             eossShiroFilterFactoryBean.updateFilterChainDefinitions(filterDefinition.getDefinition(), abstractShiroFilter);
-            filterchainDefinitionService.update(filterDefinition.setId(1));
+            filterchainDefinitionMapper.update(filterDefinition.setId(1));
         }
 
         return new ModelAndView("redirect:/system/filterDefinition/toUpdate?id=" + id);

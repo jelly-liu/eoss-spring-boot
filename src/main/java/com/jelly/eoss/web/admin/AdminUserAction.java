@@ -3,12 +3,12 @@ package com.jelly.eoss.web.admin;
 import com.jelly.eoss.db.entity.AdminUser;
 import com.jelly.eoss.db.entity.AdminUserMenu;
 import com.jelly.eoss.db.entity.AdminUserRole;
+import com.jelly.eoss.db.mapper.basic.iface.AdminUserMapper;
+import com.jelly.eoss.db.mapper.basic.iface.AdminUserMenuMapper;
+import com.jelly.eoss.db.mapper.basic.iface.AdminUserRoleMapper;
 import com.jelly.eoss.db.mapper.business.iface.RoleExtMapper;
 import com.jelly.eoss.db.mapper.business.iface.UserExtMapper;
-import com.jelly.eoss.service.basic.AdminUserMenuService;
-import com.jelly.eoss.service.basic.AdminUserRoleService;
-import com.jelly.eoss.service.basic.AdminUserService;
-import com.jelly.eoss.service.business.EossMenuService;
+import com.jelly.eoss.service.EossMenuService;
 import com.jelly.eoss.shiro.EossAuthorizingRealm;
 import com.jelly.eoss.util.*;
 import com.jelly.eoss.web.BaseAction;
@@ -32,17 +32,15 @@ public class AdminUserAction extends BaseAction {
     @Autowired
     EossMenuService eossMenuService;
     @Autowired
-    AdminUserService adminUserService;
+    AdminUserMapper userMapper;
     @Autowired
     private RoleExtMapper roleExtMapper;
     @Autowired
     UserExtMapper userExtMapper;
     @Autowired
-    AdminUserService userService;
+    AdminUserRoleMapper userRoleMapper;
     @Autowired
-    AdminUserRoleService userRoleService;
-    @Autowired
-    AdminUserMenuService userMenuService;
+    AdminUserMenuMapper userMenuMapper;
     @Autowired
     EossAuthorizingRealm eossAuthorizingRealm;
     @Autowired
@@ -52,7 +50,7 @@ public class AdminUserAction extends BaseAction {
     public void queryUserNameAjax(HttpServletRequest request, HttpServletResponse response) throws Exception {
         try {
             String name = request.getParameter("name");
-            int total = userService.selectCount(new AdminUser().setUsername(name));
+            int total = userMapper.selectCount(new AdminUser().setUsername(name));
             if (total == 0) {
                 response.getWriter().write("y");
             } else {
@@ -95,7 +93,7 @@ public class AdminUserAction extends BaseAction {
         ModelAndView mv = new ModelAndView();
 
         //查询用户名是否存在
-        int total = userService.selectCount(new AdminUser().setUsername(user.getUsername()));
+        int total = userMapper.selectCount(new AdminUser().setUsername(user.getUsername()));
         if (total != 0) {
             request.setAttribute("INFO", "该用户名已存在，请选择一个新的用户名");
             mv.setViewName("/info.htm");
@@ -113,7 +111,7 @@ public class AdminUserAction extends BaseAction {
         user.setSalt(salt);
         user.setPassword(passwordMd5);
         user.setCreateDatetime(DateUtil.GetCurrentDateTime(true));
-        adminUserService.insert(user);
+        userMapper.insert(user);
 
         //插入角色
         this.batchInsertUserRole(user.getId(), roleIds);
@@ -129,10 +127,10 @@ public class AdminUserAction extends BaseAction {
         Integer id = ServletRequestUtils.getIntParameter(request, "id");
 
         //查询自己
-        AdminUser user = adminUserService.selectByPk(id);
+        AdminUser user = userMapper.selectByPk(id);
 
         //查询该用户已拥有的角色
-        List<AdminUserRole> roleOldList = userRoleService.select(new AdminUserRole().setUserId(id));
+        List<AdminUserRole> roleOldList = userRoleMapper.select(new AdminUserRole().setUserId(id));
         Set<String> roleOldSet = new HashSet<String>();
         for (AdminUserRole m : roleOldList) {
             roleOldSet.add(m.getRoleId()+"");
@@ -151,7 +149,7 @@ public class AdminUserAction extends BaseAction {
         String zTreeNodeJson = JsonUtil.toJson(roleList);
 
         //将该角色已有菜单资源用逗号连接成一个字符串，如1,2,3,4,5,6
-        List<AdminUserMenu> resourceIdsOldList = userMenuService.select(new AdminUserMenu().setUserId(id));
+        List<AdminUserMenu> resourceIdsOldList = userMenuMapper.select(new AdminUserMenu().setUserId(id));
         StringBuilder sb = new StringBuilder();
         for (AdminUserMenu m : resourceIdsOldList) {
             sb.append(m.getMenuId()+",");
@@ -181,11 +179,11 @@ public class AdminUserAction extends BaseAction {
         String passwordMd5 = new Md5Hash(user.getPassword(), salt, 1).toString();
 
         //更新用户信息
-        AdminUser adminUser = adminUserService.selectByPk(user.getId());
+        AdminUser adminUser = userMapper.selectByPk(user.getId());
         adminUser.setUsername(user.getUsername());
         adminUser.setSalt(salt);
         adminUser.setPassword(passwordMd5);
-        adminUserService.update(adminUser);
+        userMapper.update(adminUser);
 
         //更新角色
         String roleIds = request.getParameter("roleIds");
@@ -208,7 +206,7 @@ public class AdminUserAction extends BaseAction {
 
     //批量插入用户对应的角色，只选择用JdbcTemplate的批量更新方法，以保证高性能
     private void batchInsertUserRole(Integer userId, String roleIdsStr) {
-        userRoleService.deleteByPojo(new AdminUserRole().setUserId(userId));
+        userRoleMapper.deleteByPojo(new AdminUserRole().setUserId(userId));
 
         //没有选择角色，直接返回
         if (roleIdsStr == null || roleIdsStr.trim().equals("")) {
@@ -220,14 +218,14 @@ public class AdminUserAction extends BaseAction {
         if (permissionIds.length > 0) {
             for (String roleIdStr : permissionIds) {
                 Integer roleId = Integer.valueOf(roleIdStr);
-                userRoleService.insert(new AdminUserRole().setUserId(userId).setRoleId(roleId));
+                userRoleMapper.insert(new AdminUserRole().setUserId(userId).setRoleId(roleId));
             }
         }
     }
 
     //批量插入用户对应的资源，只选择用JdbcTemplate的批量更新方法，以保证高性能
     private void batchInsertUserResource(int userId, String resourceIdsStr) {
-        userMenuService.deleteByPojo(new AdminUserMenu().setUserId(userId));
+        userMenuMapper.deleteByPojo(new AdminUserMenu().setUserId(userId));
 
         //没有选择资源，直接返回
         if (resourceIdsStr == null || resourceIdsStr.trim().equals("")) {
@@ -239,7 +237,7 @@ public class AdminUserAction extends BaseAction {
         if (resourceIds.length > 0) {
             for (String resourceIdStr : resourceIds) {
                 Integer resourceId = Integer.valueOf(resourceIdStr);
-                userMenuService.insert(new AdminUserMenu().setUserId(userId).setMenuId(resourceId));
+                userMenuMapper.insert(new AdminUserMenu().setUserId(userId).setMenuId(resourceId));
             }
         }
     }
@@ -249,13 +247,13 @@ public class AdminUserAction extends BaseAction {
         Integer id = ServletRequestUtils.getIntParameter(request, "id");
 
         //删除自己
-        adminUserService.deleteByPk(id);
+        userMapper.deleteByPk(id);
 
         //删除对应的角色
-        userRoleService.deleteByPojo(new AdminUserRole().setUserId(id));
+        userRoleMapper.deleteByPojo(new AdminUserRole().setUserId(id));
 
         //删除对应的资源
-        userMenuService.deleteByPojo(new AdminUserMenu().setUserId(id));
+        userMenuMapper.deleteByPojo(new AdminUserMenu().setUserId(id));
 
         response.getWriter().write("y");
     }

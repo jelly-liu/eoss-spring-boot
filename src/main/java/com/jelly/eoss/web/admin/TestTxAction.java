@@ -3,7 +3,6 @@ package com.jelly.eoss.web.admin;
 import com.jelly.eoss.db.entity.AdminUser;
 import com.jelly.eoss.db.mapper.basic.iface.AdminMenuMapper;
 import com.jelly.eoss.db.mapper.basic.iface.AdminUserMapper;
-import com.jelly.eoss.service.basic.AdminMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
@@ -26,8 +25,6 @@ public class TestTxAction {
     JdbcTemplate jdbcTemplate;
     @Autowired
     AdminMenuMapper menuMapper;
-    @Autowired
-    AdminMenuService menuService;
     @Autowired
     AdminUserMapper userMapper;
 

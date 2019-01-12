@@ -1,9 +1,9 @@
 package com.jelly.eoss.web.admin;
 
 import com.jelly.eoss.db.entity.AdminMenu;
+import com.jelly.eoss.db.mapper.basic.iface.AdminMenuMapper;
 import com.jelly.eoss.db.mapper.business.iface.MenuExtMapper;
-import com.jelly.eoss.service.basic.AdminMenuService;
-import com.jelly.eoss.service.business.EossMenuService;
+import com.jelly.eoss.service.EossMenuService;
 import com.jelly.eoss.util.ComUtil;
 import com.jelly.eoss.util.Const;
 import com.jelly.eoss.util.DateUtil;
@@ -35,7 +35,7 @@ public class AdminMenuAction extends BaseAction {
 	@Autowired
 	private EossMenuService eossMenuService;
 	@Autowired
-	private AdminMenuService menuService;
+	private AdminMenuMapper menuMapper;
 	@Autowired
 	private MenuExtMapper menuExtMapper;
 
@@ -126,7 +126,7 @@ public class AdminMenuAction extends BaseAction {
 		menu.setLeaf(0);
 		menu.setPath(menu.getPath() + "#" + id);
 		menu.setCreateDatetime(DateUtil.GetCurrentDateTime(true));
-		menuService.insert(menu);
+		menuMapper.insert(menu);
 
         redirectAttributes.addAttribute("id", menu.getId());
 		ModelAndView view = new ModelAndView("redirect:/system/menu/toList");
@@ -145,9 +145,9 @@ public class AdminMenuAction extends BaseAction {
 		
 //		Log.Debug("id:" + id);
 		//有子菜单，不能删除
-		int total = menuService.selectCount(new AdminMenu().setPid(id));
+		int total = menuMapper.selectCount(new AdminMenu().setPid(id));
 		if(total == 0){
-			menuService.deleteByPk(id);
+			menuMapper.deleteByPk(id);
 			response.getWriter().write("y");
 		}else{
 			response.getWriter().write("请先删除或移动，该菜单的所有子菜单和权限");
@@ -157,7 +157,7 @@ public class AdminMenuAction extends BaseAction {
 	@RequestMapping(value = "/toUpdate")
 	public ModelAndView toUpdate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		Integer id = ServletRequestUtils.getIntParameter(request, "id");
-		AdminMenu mu = menuService.selectByPk(id);
+		AdminMenu mu = menuMapper.selectByPk(id);
 		
 		List<Map<String, Object>> subMenuList = menuExtMapper.queryAllSubMenu(mu.getId());
 		//将所有id值拼接成1,2,3,4,5,6的形式
@@ -193,7 +193,7 @@ public class AdminMenuAction extends BaseAction {
 		}
 		
 		menu.setLeaf(0);
-		menuService.update(menu);
+		menuMapper.update(menu);
 
         ModelAndView modelAndView = new ModelAndView("redirect:/system/menu/toList?id=" + menu.getId());
 		return modelAndView;

@@ -1,9 +1,9 @@
 package com.jelly.eoss.web.admin;
 
 import com.jelly.eoss.db.entity.AdminMenu;
+import com.jelly.eoss.db.mapper.basic.iface.AdminMenuMapper;
 import com.jelly.eoss.db.mapper.business.iface.MenuExtMapper;
-import com.jelly.eoss.service.basic.AdminMenuService;
-import com.jelly.eoss.service.business.EossMenuService;
+import com.jelly.eoss.service.EossMenuService;
 import com.jelly.eoss.util.ComUtil;
 import com.jelly.eoss.util.Const;
 import com.jelly.eoss.util.DateUtil;
@@ -34,7 +34,7 @@ public class AdminResourceAction extends BaseAction {
 	@Autowired
 	private EossMenuService eossMenuService;
 	@Autowired
-	private AdminMenuService adminMenuService;
+	private AdminMenuMapper adminMenuMapper;
 	@Autowired
 	private MenuExtMapper menuExtMapper;
 	
@@ -70,7 +70,7 @@ public class AdminResourceAction extends BaseAction {
 		menu.setLeaf(1);
 		menu.setPath(menu.getPath() + "#" + id);
 		menu.setCreateDatetime(DateUtil.GetCurrentDateTime(true));
-		adminMenuService.insert(menu);
+		adminMenuMapper.insert(menu);
 
 		return new ModelAndView("redirect:/system/resource/toList?id=" + menu.getId());
 	}
@@ -78,14 +78,14 @@ public class AdminResourceAction extends BaseAction {
 	@RequestMapping(value = "/delete")
 	public void txDelete(HttpServletRequest request, HttpServletResponse response) throws Exception{
         Integer id = ServletRequestUtils.getIntParameter(request, "id");
-		adminMenuService.deleteByPk(id);
+		adminMenuMapper.deleteByPk(id);
 		response.getWriter().write("y");
 	}
 	
 	@RequestMapping(value = "/toUpdate")
 	public ModelAndView toUpdate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		Integer id = ServletRequestUtils.getIntParameter(request, "id");
-		AdminMenu menu = adminMenuService.selectByPk(id);
+		AdminMenu menu = adminMenuMapper.selectByPk(id);
 		
 		//装饰zTreeNode
 		Map<String, Object> pm = new HashMap();
@@ -102,14 +102,14 @@ public class AdminResourceAction extends BaseAction {
 	
 	@RequestMapping(value = "/update")
 	public ModelAndView txUpdate(HttpServletRequest request, HttpServletResponse response, AdminMenu menu) throws ServletException, IOException{
-		AdminMenu m = adminMenuService.selectByPk(menu.getId());
+		AdminMenu m = adminMenuMapper.selectByPk(menu.getId());
 		m.setName(menu.getName());
 		m.setTarget(menu.getTarget());
 		m.setLev(menu.getLev());
 		m.setPath(menu.getPath());
 		m.setUrl(menu.getUrl());
 		m.setPid(menu.getPid());
-		adminMenuService.update(m);
+		adminMenuMapper.update(m);
 
 		return new ModelAndView("redirect:/system/resource/toList?id" + menu.getId());
 	}

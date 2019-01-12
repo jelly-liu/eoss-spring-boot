@@ -1,7 +1,7 @@
 package com.jelly.eoss.web.admin;
 
 import com.jelly.eoss.db.entity.AdminUser;
-import com.jelly.eoss.service.business.EossMenuService;
+import com.jelly.eoss.service.EossMenuService;
 import com.jelly.eoss.servlet.ICodeServlet;
 import com.jelly.eoss.util.Const;
 import com.jelly.eoss.web.BaseAction;
