@@ -1,2 +1,2 @@
 # eoss-spring-boot
-spring boot, thymeleaf
+## spring boot, thymeleaf, shiro
