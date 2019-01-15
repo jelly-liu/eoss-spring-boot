@@ -1,14 +1,13 @@
 package com.jelly.eoss.configuration;
 
 import com.jelly.eoss.db.entity.AdminFilterchainDefinition;
-import com.jelly.eoss.service.basic.AdminFilterchainDefinitionService;
+import com.jelly.eoss.db.mapper.basic.iface.AdminFilterchainDefinitionMapper;
 import com.jelly.eoss.shiro.*;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,7 +28,7 @@ import java.util.Map;
 public class ShiroConfiguration {
 
     @Autowired
-    private AdminFilterchainDefinitionService filterchainDefinitionService;
+    private AdminFilterchainDefinitionMapper filterchainDefinitionMapper;
 
     @Bean
     public SecureRandomNumberGenerator secureRandomNumberGenerator(){
@@ -87,7 +86,7 @@ public class ShiroConfiguration {
         filters.put("permsOr", permsOr());
         shiroFilterFactoryBean.setFilters(filters);
 
-        AdminFilterchainDefinition filterchainDefinition = filterchainDefinitionService.selectByPk(1);
+        AdminFilterchainDefinition filterchainDefinition = filterchainDefinitionMapper.selectByPk(1);
         shiroFilterFactoryBean.setFilterChainDefinitions(filterchainDefinition.getDefinition());
 
         return shiroFilterFactoryBean;
