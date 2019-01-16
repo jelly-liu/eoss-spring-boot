@@ -11,7 +11,7 @@
  Target Server Version : 50722
  File Encoding         : utf-8
 
- Date: 01/12/2019 23:37:38 PM
+ Date: 01/16/2019 19:25:34 PM
 */
 
 SET NAMES utf8;
@@ -31,7 +31,7 @@ CREATE TABLE `admin_filterchain_definition` (
 --  Records of `admin_filterchain_definition`
 -- ----------------------------
 BEGIN;
-INSERT INTO `admin_filterchain_definition` VALUES ('1', '[urls]\n/asset/** = anon\n/toLogin = anon\n/login = anon\n/system/**/*add* = authc, rolesOr[系统管理员]\n/system/**/*update* = authc, rolesOr[系统管理员]\n/system/**/*delete* = authc, rolesOr[系统管理员]\n/** = authc');
+INSERT INTO `admin_filterchain_definition` VALUES ('1', '[urls]\n/static/** = anon\n/toLogin = anon\n/login = anon\n/system/**/*add* = authc, rolesOr[系统管理员]\n/system/**/*update* = authc, rolesOr[系统管理员]\n/system/**/*delete* = authc, rolesOr[系统管理员]\n/** = authc');
 COMMIT;
 
 -- ----------------------------
