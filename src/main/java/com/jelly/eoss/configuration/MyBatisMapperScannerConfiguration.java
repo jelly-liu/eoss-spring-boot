@@ -9,10 +9,12 @@ import org.springframework.context.annotation.Configuration;
  * @Author ：jelly.liu
  * @Date ：Created At 12:32 AM 2019/1/11
  * @Description：${description}
+ *
  */
 
-@Configuration
-@AutoConfigureAfter(MyBatisConfiguration.class)//注意，由于MapperScannerConfigurer执行的比较早，所以必须有下面的注解
+@Deprecated
+//@Configuration
+//@AutoConfigureAfter(MyBatisConfiguration.class)//注意，由于MapperScannerConfigurer执行的比较早，所以必须有下面的注解
 public class MyBatisMapperScannerConfiguration {
     @Bean
     public MapperScannerConfigurer mapperScannerConfigurer() throws Exception {
